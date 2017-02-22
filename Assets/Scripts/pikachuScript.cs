@@ -1,22 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class pikachuScript : MonoBehaviour {
+public class pikachuScript : MonoBehaviour
+{
     private Animator animator;
     private Rigidbody2D rigid;
     private float speed = 20;
     private bool isJumping;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         isJumping = false;
         rigid = rigid = this.GetComponent<Rigidbody2D>();
         animator = this.GetComponent<Animator>();
     }
-	
-	// Update is called once per frame
-	void Update () { //IsGrounded?
+
+    // Update is called once per frame
+    void Update()
+    {
         Move();
         if (!isJumping)
         {
@@ -28,7 +32,7 @@ public class pikachuScript : MonoBehaviour {
                 rigid.gravityScale = 2;
             }
         }
-        
+
     }
 
     private void Move()
@@ -37,11 +41,19 @@ public class pikachuScript : MonoBehaviour {
         {
             rigid.transform.eulerAngles = new Vector2(0, 180);
             rigid.transform.Translate(Vector3.left * 5f * Time.deltaTime);
+            if (!isJumping)
+            {
+                animator.Play("moveAnim");
+            }
         }
         if (Input.GetAxis("Horizontal") < 0)
         {
             rigid.transform.eulerAngles = new Vector2(0, 0);
             rigid.transform.Translate(Vector3.left * 5f * Time.deltaTime);
+            if (!isJumping)
+            {
+                animator.Play("moveAnim");
+            }
         }
     }
 
@@ -49,8 +61,13 @@ public class pikachuScript : MonoBehaviour {
     {
         if (collision.gameObject.tag == "ground")
         {
-            animator.Play("idleAnim");   
+            animator.Play("idleAnim");
             isJumping = false;
         }
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.LoadScene("gameOverScene", LoadSceneMode.Additive);
     }
 }
